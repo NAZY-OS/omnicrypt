@@ -1,0 +1,12 @@
+{
+  "containers": [
+    {
+      "mapper": "secure_img1",
+      "image": "/var/lib/secure1.img",
+      "mount_point": "/mnt/secure1",
+      "fscrypt_method": "custom",
+      "auto_mount_on_start": false,
+      "default_autoclose_min": 10
+    }
+  ]
+}
