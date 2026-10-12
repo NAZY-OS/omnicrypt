@@ -1,6 +1,6 @@
 # OmniCrypt (Pro)
 
-Ein sicheres, modernes Linux-Desktop-Management-System für LUKS-Container und `fscrypt`-Verzeichnisse mit D-Bus, Polkit und GTK4.
+A professional-grade Linux security tool for managing LUKS containers and `fscrypt` directories. OmniCrypt provides a secure, non-interactive architecture that avoids password persistence, utilizing a Polkit-secured D-Bus system service and a polished GTK4/Libadwaita GUI.
 
-* **Entwickler:** NAZY-OS
-* **Lizenz:** GNU GPL v3
+* **Developer:** NAZY-OS
+* **License:** GNU GPL v3

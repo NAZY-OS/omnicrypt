@@ -40,9 +40,13 @@ backend_create_container_image() {
 
     [[ -f "$img_path" ]] && return 1
 
+    # 1. Create sparse image file
     truncate -s "${size_mb}M" "$img_path" || return 1
+
+    # 2. Format ext4 with encryption support enabled
     mkfs.ext4 -O encrypt -F "$img_path" || return 1
 
+    # 3. Register in config.json
     if command -v jq >/dev/null 2>&1; then
         local tmp
         tmp=$(mktemp)
@@ -77,6 +81,7 @@ backend_open_luks_with_password() {
     cryptsetup status "$mapper_name" >/dev/null 2>&1 && return 0
     [[ ! -f "$img_path" ]] && return 1
 
+    # Pass password via stdin pipe securely without saving to disk
     cryptsetup luksOpen --key-file - "$img_path" "$mapper_name" || return 1
     mkdir -p -- "$mount_point"
     mount "/dev/mapper/$mapper_name" "$mount_point"

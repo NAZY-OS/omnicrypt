@@ -4,9 +4,7 @@ project('omnicrypt',
   meson_version: '>= 0.56.0'
 )
 
-i18n = import('i18n')
-
-# Installation der Backend- und Servicedateien
+# Install backend and service scripts
 install_data(
   'omnicrypt.sh',
   install_dir: get_option('bindir'),
@@ -25,13 +23,13 @@ install_data(
   install_mode: 'rwxr-xr-x'
 )
 
-# Polkit Action Policy
+# Polkit action policy
 install_data(
   'org.omnicrypt.Manager.policy',
   install_dir: join_paths(get_option('datadir'), 'polkit-1', 'actions')
 )
 
-# Konfigurationsvorlage
+# Configuration template
 install_data(
   'config.json',
   install_dir: join_paths(get_option('sysconfdir'), 'omnicrypt')

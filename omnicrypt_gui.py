@@ -43,15 +43,15 @@ class OmniCryptWindow(Gtk.ApplicationWindow):
         hb = Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL, spacing=6)
         left_box.append(hb)
 
-        btn_ref = Gtk.Button(label="Aktualisieren")
+        btn_ref = Gtk.Button(label="Refresh")
         btn_ref.connect("clicked", lambda w: self.refresh_status())
         hb.append(btn_ref)
 
-        btn_create = Gtk.Button(label="+ Image")
+        btn_create = Gtk.Button(label="+ New Image")
         btn_create.connect("clicked", self.on_create_image_clicked)
         hb.append(btn_create)
 
-        self.status_label = Gtk.Label(label="System bereit (NAZY-OS).", xalign=0)
+        self.status_label = Gtk.Label(label="System ready (NAZY-OS).", xalign=0)
         left_box.append(self.status_label)
 
         scrolled = Gtk.ScrolledWindow(vexpand=True, hexpand=True)
@@ -63,7 +63,7 @@ class OmniCryptWindow(Gtk.ApplicationWindow):
         right_box.set_hexpand(True)
         main_box.append(right_box)
 
-        right_box.append(Gtk.Label(label="Dateisystem-Browser (Rechtsklick auf .img zum sicheren Mounten)", xalign=0))
+        right_box.append(Gtk.Label(label="Filesystem Browser (Right-click .img to mount securely)", xalign=0))
 
         fm_scrolled = Gtk.ScrolledWindow(vexpand=True, hexpand=True)
         right_box.append(fm_scrolled)
@@ -90,7 +90,7 @@ class OmniCryptWindow(Gtk.ApplicationWindow):
             try:
                 func(*args)
             except Exception as e:
-                GLib.idle_add(self.set_status, f"Fehler: {e}")
+                GLib.idle_add(self.set_status, f"Error: {e}")
             GLib.idle_add(self.refresh_status)
         threading.Thread(target=worker, daemon=True).start()
 
@@ -98,7 +98,7 @@ class OmniCryptWindow(Gtk.ApplicationWindow):
         while (row := self.list_box.get_row_at_index(0)):
             self.list_box.remove(row)
         if not self.proxy:
-            self.list_box.append(Gtk.Label(label="Keine D-Bus Verbindung."))
+            self.list_box.append(Gtk.Label(label="No D-Bus connection."))
             return
         try:
             data = json.loads(self.proxy.GetStatus())
@@ -109,17 +109,17 @@ class OmniCryptWindow(Gtk.ApplicationWindow):
             frame = Gtk.Frame(label=f"Container: {c['mapper']}")
             f_box = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=6, margin_top=8, margin_bottom=8, margin_start=8, margin_end=8)
             frame.set_child(f_box)
-            f_box.append(Gtk.Label(label=f"Bild: {c['image']}\nMount: {c['mount_point']} | Status: {'Gesperrt 🔒' if c['luks_locked'] else 'Offen 🔓'}", xalign=0))
+            f_box.append(Gtk.Label(label=f"Image: {c['image']}\nMount: {c['mount_point']} | Status: {'Locked 🔒' if c['luks_locked'] else 'Unlocked 🔓'}", xalign=0))
 
             if not c['luks_locked']:
-                btn_new_folder = Gtk.Button(label="+ Neuer verschlüsselter Ordner")
+                btn_new_folder = Gtk.Button(label="+ New Encrypted Folder")
                 btn_new_folder.connect("clicked", self.on_create_fscrypt_folder, c['mount_point'])
                 f_box.append(btn_new_folder)
 
                 for f in c['fscrypt_folders']:
                     r_box = Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL, spacing=10)
                     r_box.append(Gtk.Label(label=f"• {f['name']} [{f['method']}]", xalign=0, hexpand=True))
-                    btn = Gtk.Button(label="Entsperren" if f['locked'] else "Sperren")
+                    btn = Gtk.Button(label="Unlock" if f['locked'] else "Lock")
                     btn.connect("clicked", self.on_toggle_folder, f['path'], f['locked'], f['method'])
                     r_box.append(btn)
                     f_box.append(r_box)
@@ -158,13 +158,13 @@ class OmniCryptWindow(Gtk.ApplicationWindow):
             self.prompt_luks_password(path_str)
 
     def prompt_luks_password(self, img_path):
-        dialog = Gtk.Dialog(title="LUKS-Container sicher entsperren", transient_for=self, modal=True)
-        dialog.add_button("Abbrechen", Gtk.ResponseType.CANCEL)
-        dialog.add_button("Entsperren", Gtk.ResponseType.OK)
+        dialog = Gtk.Dialog(title="Unlock LUKS Container Securely", transient_for=self, modal=True)
+        dialog.add_button("Cancel", Gtk.ResponseType.CANCEL)
+        dialog.add_button("Unlock", Gtk.ResponseType.OK)
         
         area = dialog.get_content_area()
         area.set_margin_top(12); area.set_margin_bottom(12); area.set_margin_start(12); area.set_margin_end(12); area.set_spacing(6)
-        area.append(Gtk.Label(label=f"Passwort für Container (wird nicht gespeichert):\n{img_path}", xalign=0))
+        area.append(Gtk.Label(label=f"Password for container (not stored):\n{img_path}", xalign=0))
         
         entry = Gtk.Entry(visibility=False)
         area.append(entry)
@@ -179,33 +179,33 @@ class OmniCryptWindow(Gtk.ApplicationWindow):
             mapper_name = os.path.basename(img_path).replace(".img", "")
             mount_point = f"/mnt/{mapper_name}"
             self.run_async(self.proxy.MountImageWithPassword, img_path, mapper_name, mount_point, pwd)
-            self.set_status("LUKS Container sicher eingehängt.")
+            self.set_status("LUKS container mounted successfully.")
 
     def on_create_image_clicked(self, btn):
-        dialog = Gtk.Dialog(title="Neues Verschlüsselungs-Image erstellen", transient_for=self, modal=True)
-        dialog.add_button("Abbrechen", Gtk.ResponseType.CANCEL)
-        dialog.add_button("Erstellen", Gtk.ResponseType.OK)
+        dialog = Gtk.Dialog(title="Create New Encrypted Image", transient_for=self, modal=True)
+        dialog.add_button("Cancel", Gtk.ResponseType.CANCEL)
+        dialog.add_button("Create", Gtk.ResponseType.OK)
         
         area = dialog.get_content_area()
         area.set_margin_top(12); area.set_margin_bottom(12); area.set_margin_start(12); area.set_margin_end(12); area.set_spacing(6)
         
-        area.append(Gtk.Label(label="Mapper-Name:", xalign=0))
+        area.append(Gtk.Label(label="Mapper Name:", xalign=0))
         e_mapper = Gtk.Entry(text="secure_data")
         area.append(e_mapper)
 
-        area.append(Gtk.Label(label="Speicherort & Dateiname (.img):", xalign=0))
+        area.append(Gtk.Label(label="Storage Path & Filename (.img):", xalign=0))
         e_path = Gtk.Entry(text="/var/lib/secure_data.img")
         area.append(e_path)
 
-        area.append(Gtk.Label(label="Größe in MB (z.B. 1024):", xalign=0))
+        area.append(Gtk.Label(label="Size in MB (e.g. 1024):", xalign=0))
         e_size = Gtk.Entry(text="1024")
         area.append(e_size)
 
-        area.append(Gtk.Label(label="Mountpunkt:", xalign=0))
+        area.append(Gtk.Label(label="Mount Point:", xalign=0))
         e_mount = Gtk.Entry(text="/mnt/secure_data")
         area.append(e_mount)
 
-        area.append(Gtk.Label(label="Fscrypt Methode (custom, login, raw_key):", xalign=0))
+        area.append(Gtk.Label(label="Fscrypt Method (custom, login, raw_key):", xalign=0))
         e_method = Gtk.Entry(text="custom")
         area.append(e_method)
 
@@ -221,22 +221,22 @@ class OmniCryptWindow(Gtk.ApplicationWindow):
             meth = e_method.get_text().strip()
             if self.proxy:
                 self.run_async(self.proxy.CreateImage, m, p, s, mp, meth)
-                self.set_status(f"Image {p} erstellt.")
+                self.set_status(f"Image {p} created successfully.")
         dialog.destroy()
 
     def on_create_fscrypt_folder(self, btn, mount_point):
-        dialog = Gtk.Dialog(title="Neuen fscrypt Ordner anlegen", transient_for=self, modal=True)
-        dialog.add_button("Abbrechen", Gtk.ResponseType.CANCEL)
-        dialog.add_button("Erstellen", Gtk.ResponseType.OK)
+        dialog = Gtk.Dialog(title="Setup New fscrypt Folder", transient_for=self, modal=True)
+        dialog.add_button("Cancel", Gtk.ResponseType.CANCEL)
+        dialog.add_button("Create", Gtk.ResponseType.OK)
         
         area = dialog.get_content_area()
         area.set_margin_top(12); area.set_margin_bottom(12); area.set_margin_start(12); area.set_margin_end(12); area.set_spacing(6)
         
-        area.append(Gtk.Label(label=f"Ordnername in {mount_point}:", xalign=0))
-        e_name = Gtk.Entry(text="geheim")
+        area.append(Gtk.Label(label=f"Folder Name in {mount_point}:", xalign=0))
+        e_name = Gtk.Entry(text="secret")
         area.append(e_name)
 
-        area.append(Gtk.Label(label="Methode (custom, login, raw_key):", xalign=0))
+        area.append(Gtk.Label(label="Method (custom, login, raw_key):", xalign=0))
         e_method = Gtk.Entry(text="custom")
         area.append(e_method)
 
@@ -249,22 +249,22 @@ class OmniCryptWindow(Gtk.ApplicationWindow):
             method = e_method.get_text().strip()
             if self.proxy:
                 self.run_async(self.proxy.SetupFolder, target_path, method)
-                self.set_status(f"Ordner erstellt: {target_path}")
+                self.set_status(f"Encrypted folder created: {target_path}")
         dialog.destroy()
 
     def on_toggle_folder(self, btn, fpath, locked, method):
         if not locked:
             self.run_async(self.proxy.LockFolder, fpath)
-            self.set_status(f"Ordner gesperrt: {fpath}")
+            self.set_status(f"Folder locked: {fpath}")
             return
 
         if method == "raw_key":
-            dialog = Gtk.FileDialog(title="Raw-Key Schlüsseldatei auswählen")
+            dialog = Gtk.FileDialog(title="Select Raw-Key File")
             dialog.open(self, None, lambda s, r: self.finish_raw_key_unlock(s, r, fpath, method))
         elif method == "login":
-            self.prompt_fscrypt_password(fpath, method, "System-Login Passwort eingeben:")
+            self.prompt_fscrypt_password(fpath, method, "Enter System Login Password:")
         else:
-            self.prompt_fscrypt_password(fpath, method, "Fscrypt Custom-Passwort eingeben:")
+            self.prompt_fscrypt_password(fpath, method, "Enter fscrypt Custom Password:")
 
     def finish_raw_key_unlock(self, dialog, result, fpath, method):
         try:
@@ -274,9 +274,9 @@ class OmniCryptWindow(Gtk.ApplicationWindow):
             pass
 
     def prompt_fscrypt_password(self, fpath, method, label_text):
-        dialog = Gtk.Dialog(title=f"Fscrypt ({method})", transient_for=self, modal=True)
-        dialog.add_button("Abbrechen", Gtk.ResponseType.CANCEL)
-        dialog.add_button("Entsperren", Gtk.ResponseType.OK)
+        dialog = Gtk.Dialog(title=f"fscrypt ({method})", transient_for=self, modal=True)
+        dialog.add_button("Cancel", Gtk.ResponseType.CANCEL)
+        dialog.add_button("Unlock", Gtk.ResponseType.OK)
         
         area = dialog.get_content_area()
         area.set_margin_top(12); area.set_margin_bottom(12); area.set_margin_start(12); area.set_margin_end(12); area.set_spacing(6)
@@ -293,7 +293,7 @@ class OmniCryptWindow(Gtk.ApplicationWindow):
         dialog.destroy()
         if response == Gtk.ResponseType.OK and self.proxy:
             self.run_async(self.proxy.UnlockFolderAdvanced, fpath, method, "", pwd, 10)
-            self.set_status(f"Ordner entsperrt mit Methode: {method}")
+            self.set_status(f"Folder unlocked with method: {method}")
 
 class OmniCryptApp(Gtk.Application):
     def __init__(self):
