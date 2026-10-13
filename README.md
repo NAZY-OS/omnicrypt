@@ -19,32 +19,32 @@
 
 ---
 
-## 📖 Inhaltsverzeichnis
-- [Funktionen](#-funktionen)
-- [Architektur & Tech Stack](#-architektur--tech-stack)
-- [Voraussetzungen & Build-Tools](#-voraussetzungen--build-tools)
-- [Installationsanleitung](#-installationsanleitung)
-- [Lizenz](#-lizenz)
+## 📖 Table of Contents
+- [Features](#-features)
+- [Architecture & Tech Stack](#-architecture--tech-stack)
+- [Prerequisites & Build Tools](#-prerequisites--build-tools)
+- [Installation Guide](#-installation-guide)
+- [License](#-license)
 
 ---
 
-## ✨ Funktionen (v.0.93)
+## ✨ Features (v.0.93)
 
-* **🔐 Sichere Passwortverarbeitung:** Passwörter werden über sichere Standard-Input-Pipelines (stdin) übergeben und niemals persistent auf der Festplatte gespeichert.
-* **🗂️ Klassisches Windows 7 Design & Menüleiste:** Klassischer Fensterril mit nativer Menüleiste, Tab-Navigation und korrektem UI-Rendering beim Start (keine schwarzen Bildschirme).
-* **📁 Image- & Ordnerverwaltung:**
-  * **LUKS-Container:** Durchsuchen, Erstellen neuer Sparse-Images, Formatieren (`mkfs.ext4`) und sicheres Mounten.
-  * **fscrypt-Ordner:** Initialisieren, Protektoren hinzufügen, Entsperren und Sperren verschlüsselter Verzeichnisse.
-* **⌨️ Globale Tastenkombinationen:** 
-  * `Ctrl + Alt + G`: Fenster ein-/ausblenden oder in den Vordergrund bringen.
-  * `Ctrl + Shift + L`: Notfall-Lockdown (Panic Button: sofortiges `sync`, Unmount und Sperren aller Container/Ordner).
-* **tray System-Tray-Integration:** Interaktives Statusleisten-Symbol mit dynamischem Zustandswechsel (Gesichert vs. Unlocked/Aktiv) für XFCE, KDE Plasma und GNOME.
-* **🔊 Audio- & Desktop-Benachrichtigungen:** Integrierte Benachrichtigungen und akustische System-Signale (``) für Sicherheitsereignisse und Inaktivitäts-Warnungen.
-* **⏱️ Auto-Close-Timer & Optionen:** Konfigurierbare Inaktivitäts-Timer zur automatischen Schließung inaktiver Vaults.
+* **🔐 Secure Password Handling:** Passwords pass through secure stdin pipes and are never stored persistently on disk.
+* **🗂️ Classic Windows 7 Aesthetic & Menu Bar:** Classic window style with a native menu bar, tab navigation, and proper UI rendering on startup (eliminating black screens).
+* **📁 Image & Folder Management:**
+  * **LUKS Containers:** Browse, create new sparse images, format (`mkfs.ext4`), and mount via secure stdin.
+  * **fscrypt Folders:** Initialize, add protectors, unlock, and lock encrypted directories.
+* **⌨️ Global Shortcuts:** 
+  * `Ctrl + Alt + G`: Toggle/Bring window to front.
+  * `Ctrl + Shift + L`: Emergency Lockdown (Panic Button: instant `sync`, unmount, and lock all containers/folders).
+* **tray System Tray Integration:** Fully interactive status icon menu with dynamic state changing (Locked vs. Unlocked/Active) across XFCE, KDE Plasma, and GNOME.
+* **🔊 Audio & Desktop Notifications:** Built-in desktop alerts and terminal bell (`\a`) info sound cues for security events and auto-close warnings.
+* **⏱️ Auto-Close Timer & Options:** Configurable inactivity timers to automatically dismount and lock inactive vaults.
 
 ---
 
-## 🛠️ Voraussetzungen & Build-Tools
+## 🛠️ Prerequisites & Build Tools
 
 * **Arch Linux:** `base-devel`, `python`, `python-gobject`, `python-pydbus`, `gtk4`, `libayatana-appindicator`, `cryptsetup`, `fscrypt`, `meson`, `ninja`, `gobject-introspection`
 * **Fedora Linux:** `Development Tools`, `python3`, `python3-gobject`, `python3-pydbus`, `gtk4`, `libayatana-appindicator-gtk3`, `cryptsetup`, `fscrypt`, `meson`, `ninja-build`, `python3-virtualenv`
@@ -52,10 +52,10 @@
 
 ---
 
-## 🚀 Installationsanleitung
+## 🚀 Installation Guide
 
-### Schritt 1: Systemabhängigkeiten installieren
-> **👤 Als normaler Benutzer ausführen**
+### Step 1: Install System Dependencies
+> **👤 Run as Normal User**
 
 * **Arch Linux:**
   ```bash
@@ -74,8 +74,8 @@
 
 ---
 
-### Schritt 2: Python Virtuelle Umgebung einrichten
-> **👤 Als normaler Benutzer ausführen**
+### Step 2: Setup Python Virtual Environment
+> **👤 Run as Normal User**
 
 ```bash
 python3 -m venv --system-site-packages venv
@@ -86,8 +86,8 @@ pip install -r requirements.txt
 
 ---
 
-### Schritt 3: Projekt kompilieren & installieren
-> **🔑 Als Root / Administrator ausführen**
+### Step 3: Build & Install Project
+> **🔑 Run as Root / Administrator**
 
 ```bash
 su -
@@ -99,5 +99,5 @@ ninja -C builddir install
 
 ---
 
-## 📜 Lizenz
-Lizenziert unter der **GNU General Public License v3.0 oder höher (GPLv3+)**. Entwickelt für **NAZY-OS** (v.0.93).
+## 📜 License
+Licensed under the **GNU General Public License v3.0 or later (GPLv3+)**. Developed for **NAZY-OS** (v.0.93).
